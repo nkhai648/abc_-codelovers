@@ -3230,9 +3230,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
 
 
 
@@ -3263,8 +3260,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   mounted: function mounted() {
     this.GET_LIST_PRODUCTS_API();
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['getListProducts', 'getPaginateGetter', 'getSearch', 'getTotalSearch', 'getListColor', 'getListSize', 'getDataColor', 'getDataSize', 'getNameColor', 'getNameSize', 'getDataPrice'])),
-  methods: _objectSpread(_objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['editProduct', 'clickDeleteProduct', 'getListProductApi', 'getPaginate'])), Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])(['GET_CART_API', 'GET_COLOR_API', 'GET_SIZE_API', 'GET_LIST_PRODUCTS_API', 'FETCH_CUSTOMER', 'FETCH_NUMBER_PAGE', 'searchNameProduct', 'SORT_COLOR', 'FETCH_NUMBER_PAGE_COLOR', 'FETCH_NUMBER_PAGE_SIZE', 'SORT_SIZE', 'SORT_PRICE', 'FETCH_NUMBER_PAGE_PRICE'])), {}, {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['getListProducts', 'getPaginateGetter', 'getSearch', 'getTotalSearch', 'getListColor', 'getListSize', 'getDataColor', 'getDataSize', 'getNameColor', 'getNameSize', 'getDataPrice', 'getNameTable', 'getIdSort'])),
+  methods: _objectSpread(_objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['editProduct', 'clickDeleteProduct', 'getListProductApi', 'getPaginate'])), Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])(['GET_CART_API', 'GET_COLOR_API', 'GET_SIZE_API', 'GET_LIST_PRODUCTS_API', 'FETCH_CUSTOMER', 'FETCH_NUMBER_PAGE', 'searchNameProduct', 'SORT_COLOR', 'SORT_SIZE', 'SORT_PRICE', 'FETCH_NUMBER_PAGE_PRICE', 'FETCH_NUMBER_PAGE_ALL'])), {}, {
     getActive: function getActive(number) {
       if (number == this.getPaginateGetter.current_page) {
         return true;
@@ -24566,7 +24563,7 @@ var render = function () {
               { staticClass: "alert alert-danger", attrs: { role: "alert" } },
               [
                 _vm._v(
-                  "\n      Sort Size: " +
+                  "\n      Sort Price: " +
                     _vm._s(_vm.capitalizeText(_vm.getDataPrice)) +
                     "\n    "
                 ),
@@ -24711,7 +24708,7 @@ var render = function () {
                           class: [{ active: _vm.getActive(page) }],
                         },
                         [
-                          _vm.getDataColor.id != ""
+                          _vm.getNameTable != ""
                             ? _c(
                                 "a",
                                 {
@@ -24719,43 +24716,10 @@ var render = function () {
                                   attrs: { href: "#" },
                                   on: {
                                     click: function ($event) {
-                                      return _vm.FETCH_NUMBER_PAGE_COLOR({
-                                        id: _vm.getDataColor.id,
-                                        number: page,
-                                      })
-                                    },
-                                  },
-                                },
-                                [_vm._v(_vm._s(page))]
-                              )
-                            : _vm.getDataSize.id != ""
-                            ? _c(
-                                "a",
-                                {
-                                  staticClass: "page-link",
-                                  attrs: { href: "#" },
-                                  on: {
-                                    click: function ($event) {
-                                      return _vm.FETCH_NUMBER_PAGE_SIZE({
-                                        id: _vm.getDataSize.id,
-                                        number: page,
-                                      })
-                                    },
-                                  },
-                                },
-                                [_vm._v(_vm._s(page))]
-                              )
-                            : _vm.getDataPrice != ""
-                            ? _c(
-                                "a",
-                                {
-                                  staticClass: "page-link",
-                                  attrs: { href: "#" },
-                                  on: {
-                                    click: function ($event) {
-                                      return _vm.FETCH_NUMBER_PAGE_PRICE({
-                                        param: _vm.getDataPrice,
-                                        number: page,
+                                      return _vm.FETCH_NUMBER_PAGE_ALL({
+                                        table: _vm.getNameTable,
+                                        id: _vm.getIdSort,
+                                        page: page,
                                       })
                                     },
                                   },
@@ -43110,17 +43074,17 @@ var state = {
   list_color: [],
   list_products: {},
   errors: [],
-  nameSize: '',
-  nameColor: '',
+  nameSize: "",
+  nameColor: "",
   dataColor: {
-    id: '',
-    color_name: ''
+    id: "",
+    color_name: ""
   },
   dataSize: {
-    id: '',
-    size_name: ''
+    id: "",
+    size_name: ""
   },
-  dataPrice: '',
+  dataPrice: "",
   alert: {
     create: "",
     update: ""
@@ -43143,7 +43107,9 @@ var state = {
   dataSearch: {
     search: ""
   },
-  totalSearch: ""
+  totalSearch: "",
+  nameTable: "",
+  idSort: ""
 };
 var getters = {
   getDataProduct: function getDataProduct(state) {
@@ -43196,6 +43162,12 @@ var getters = {
   },
   getDataPrice: function getDataPrice(state) {
     return state.dataPrice;
+  },
+  getNameTable: function getNameTable(state) {
+    return state.nameTable;
+  },
+  getIdSort: function getIdSort(state) {
+    return state.idSort;
   }
 };
 var mutations = {
@@ -43282,6 +43254,12 @@ var mutations = {
   },
   setDataPrice: function setDataPrice(state, name) {
     state.dataPrice = name;
+  },
+  setNameTable: function setNameTable(state, name) {
+    state.nameTable = name;
+  },
+  setIdSort: function setIdSort(state, id) {
+    state.idSort = id;
   }
 };
 var actions = {
@@ -43371,96 +43349,85 @@ var actions = {
       console.log("ERROR:", error.response.data.errors);
     });
   },
-  FETCH_NUMBER_PAGE_COLOR: function FETCH_NUMBER_PAGE_COLOR(_ref13, _ref14) {
-    var commit = _ref13.commit;
-    var id = _ref14.id,
-        number = _ref14.number;
-    axios.get("/api/admin/category/product/color/".concat(id, "?page=").concat(number)).then(function (res) {
+  FETCH_NUMBER_PAGE_ALL: function FETCH_NUMBER_PAGE_ALL(_ref13, _ref14) {
+    var commit = _ref13.commit,
+        state = _ref13.state;
+    var table = _ref14.table,
+        id = _ref14.id,
+        page = _ref14.page;
+    axios.get("/api/admin/category/product/".concat(table, "/").concat(id, "?page=").concat(page)).then(function (res) {
       commit("getListProductApi", res.data.products.product);
       commit("getPaginate", res.data.paginate);
     })["catch"](function (error) {
-      console.log("ERROR:", error.response.data.errors);
+      console.log("ERROR: ", error.data.response.errors);
     });
   },
-  FETCH_NUMBER_PAGE_SIZE: function FETCH_NUMBER_PAGE_SIZE(_ref15, _ref16) {
-    var commit = _ref15.commit;
-    var id = _ref16.id,
-        number = _ref16.number;
-    axios.get("/api/admin/category/product/size/".concat(id, "?page=").concat(number)).then(function (res) {
-      commit("getListProductApi", res.data.products.product);
-      commit("getPaginate", res.data.paginate);
-    })["catch"](function (error) {
-      console.log("ERROR:", error.response.data.errors);
-    });
-  },
-  FETCH_NUMBER_PAGE_PRICE: function FETCH_NUMBER_PAGE_PRICE(_ref17, _ref18) {
-    var commit = _ref17.commit;
-    var param = _ref18.param,
-        number = _ref18.number;
-    axios.get("/api/admin/category/product/price/".concat(param, "?page=").concat(number)).then(function (res) {
-      commit("getListProductApi", res.data.products.product);
-      commit("getPaginate", res.data.paginate);
-    })["catch"](function (error) {
-      console.log("ERROR:", error.response.data.errors);
-    });
-  },
-  searchNameProduct: function searchNameProduct(_ref19) {
-    var commit = _ref19.commit,
-        state = _ref19.state;
+  searchNameProduct: function searchNameProduct(_ref15) {
+    var commit = _ref15.commit,
+        state = _ref15.state;
     var data = new FormData();
     data.append("search", state.dataSearch.search);
     axios.post("/api/admin/category/product/search", data).then(function (res) {
       commit("getListProductApi", res.data.dataSearch);
       commit("setTotalSearchApi", res.data.total);
+      commit("setdataPrice", "");
+      commit("setNameColor", "");
+      commit("setNameSize", "");
     })["catch"](function (error) {
       console.log("ERROR: ".error.response.data.errors);
     });
   },
-  SORT_COLOR: function SORT_COLOR(_ref20, id) {
-    var commit = _ref20.commit,
-        state = _ref20.state;
+  SORT_COLOR: function SORT_COLOR(_ref16, id) {
+    var commit = _ref16.commit,
+        state = _ref16.state;
     axios.get("/api/admin/category/product/color/".concat(id)).then(function (res) {
       commit("getListProductApi", res.data.products.product);
       commit("getPaginate", res.data.paginate);
+      commit("setNameTable", "color");
+      commit("setIdSort", id);
       commit("setDataColor", res.data.color[0]);
       commit("setNameColor", res.data.color[0].color_name);
-      commit("setNameSize", '');
-      commit("setDataPrice", '');
+      commit("setNameSize", "");
+      commit("setDataPrice", "");
     })["catch"](function (error) {
-      console.log("ERROR:", error.response.data.errors);
+      console.log("ERROR: ", error.data.response.errors);
     });
   },
-  SORT_SIZE: function SORT_SIZE(_ref21, id) {
-    var commit = _ref21.commit,
-        state = _ref21.state;
+  SORT_SIZE: function SORT_SIZE(_ref17, id) {
+    var commit = _ref17.commit,
+        state = _ref17.state;
     axios.get("/api/admin/category/product/size/".concat(id)).then(function (res) {
       commit("getListProductApi", res.data.products.product);
       commit("getPaginate", res.data.paginate);
+      commit("setNameTable", "size");
+      commit("setIdSort", id);
       commit("setDataSize", res.data.size[0]);
       commit("setNameSize", res.data.size[0].size_name);
-      commit("setNameColor", '');
-      commit("setDataPrice", '');
+      commit("setNameColor", "");
+      commit("setDataPrice", "");
     })["catch"](function (error) {
-      console.log("ERROR:", error.response.data.errors);
+      console.log("ERROR: ", error.data.response.errors);
     });
   },
-  SORT_PRICE: function SORT_PRICE(_ref22, param) {
-    var commit = _ref22.commit,
-        state = _ref22.state;
+  SORT_PRICE: function SORT_PRICE(_ref18, param) {
+    var commit = _ref18.commit,
+        state = _ref18.state;
 
-    if (param == 'ascending') {
-      commit("setDataPrice", 'ascending');
+    if (param == "ascending") {
+      commit("setDataPrice", "ascending");
     } else {
-      commit("setDataPrice", 'descending');
+      commit("setDataPrice", "descending");
     }
 
     axios.get("/api/admin/category/product/price/".concat(param)).then(function (res) {
       commit("getListProductApi", res.data.products.product);
       commit("getPaginate", res.data.paginate);
-      commit("setNameSize", '');
-      commit("setNameColor", '');
+      commit("setNameTable", "price");
+      commit("setIdSort", param);
+      commit("setNameSize", "");
+      commit("setNameColor", "");
     })["catch"](function (error) {
-      console.log("ERROR:", error.response.data.errors);
+      console.log("ERROR: ", error.data.response.errors);
     });
   }
 };

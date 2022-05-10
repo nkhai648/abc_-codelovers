@@ -13,17 +13,17 @@ const state = {
     list_color: [],
     list_products: {},
     errors: [],
-    nameSize: '',
-    nameColor: '',
+    nameSize: "",
+    nameColor: "",
     dataColor: {
-        id: '',
-        color_name: ''
+        id: "",
+        color_name: "",
     },
     dataSize: {
-        id: '',
-        size_name: ''
+        id: "",
+        size_name: "",
     },
-    dataPrice: '',
+    dataPrice: "",
     alert: {
         create: "",
         update: "",
@@ -47,6 +47,8 @@ const state = {
         search: "",
     },
     totalSearch: "",
+    nameTable: "",
+    idSort: "",
 };
 const getters = {
     getDataProduct: (state) => state.dataProducts,
@@ -65,7 +67,9 @@ const getters = {
     getDataSize: (state) => state.dataSize,
     getNameSize: (state) => state.nameSize,
     getNameColor: (state) => state.nameColor,
-    getDataPrice: (state) => state.dataPrice
+    getDataPrice: (state) => state.dataPrice,
+    getNameTable: (state) => state.nameTable,
+    getIdSort: (state) => state.idSort,
 };
 const mutations = {
     getCartApi(state, data) {
@@ -128,24 +132,30 @@ const mutations = {
     setDataColor(state, data) {
         state.dataColor = {
             id: data.id,
-            color_name: data.color_name
-        }
+            color_name: data.color_name,
+        };
     },
     setDataSize(state, data) {
         state.dataSize = {
             id: data.id,
-            size_name: data.size_name
-        }
+            size_name: data.size_name,
+        };
     },
     setNameSize(state, name) {
-        state.nameSize = name
+        state.nameSize = name;
     },
     setNameColor(state, name) {
-        state.nameColor = name
+        state.nameColor = name;
     },
     setDataPrice(state, name) {
-        state.dataPrice = name
-    }
+        state.dataPrice = name;
+    },
+    setNameTable(state, name) {
+        state.nameTable = name;
+    },
+    setIdSort(state, id) {
+        state.idSort = id;
+    },
 };
 const actions = {
     GET_CART_API({ commit, state }) {
@@ -239,37 +249,15 @@ const actions = {
                 console.log("ERROR:", error.response.data.errors);
             });
     },
-    FETCH_NUMBER_PAGE_COLOR({ commit }, {id, number}) {
+    FETCH_NUMBER_PAGE_ALL({ commit, state }, { table, id, page }) {
         axios
-            .get(`/api/admin/category/product/color/${id}?page=${number}`)
+            .get(`/api/admin/category/product/${table}/${id}?page=${page}`)
             .then((res) => {
                 commit("getListProductApi", res.data.products.product);
                 commit("getPaginate", res.data.paginate);
             })
             .catch((error) => {
-                console.log("ERROR:", error.response.data.errors);
-            });
-    },
-    FETCH_NUMBER_PAGE_SIZE({ commit }, {id, number}) {
-        axios
-            .get(`/api/admin/category/product/size/${id}?page=${number}`)
-            .then((res) => {
-                commit("getListProductApi", res.data.products.product);
-                commit("getPaginate", res.data.paginate);
-            })
-            .catch((error) => {
-                console.log("ERROR:", error.response.data.errors);
-            });
-    },
-    FETCH_NUMBER_PAGE_PRICE({ commit }, {param, number}) {
-        axios
-            .get(`/api/admin/category/product/price/${param}?page=${number}`)
-            .then((res) => {
-                commit("getListProductApi", res.data.products.product);
-                commit("getPaginate", res.data.paginate);
-            })
-            .catch((error) => {
-                console.log("ERROR:", error.response.data.errors);
+                console.log("ERROR: ", error.data.response.errors);
             });
     },
     searchNameProduct({ commit, state }) {
@@ -280,6 +268,9 @@ const actions = {
             .then((res) => {
                 commit("getListProductApi", res.data.dataSearch);
                 commit("setTotalSearchApi", res.data.total);
+                commit("setdataPrice", "")
+                commit("setNameColor", "")
+                commit("setNameSize", "")
             })
             .catch((error) => {
                 console.log("ERROR: ".error.response.data.errors);
@@ -291,14 +282,15 @@ const actions = {
             .then((res) => {
                 commit("getListProductApi", res.data.products.product);
                 commit("getPaginate", res.data.paginate);
-                commit("setDataColor", res.data.color[0])
-                commit("setNameColor", res.data.color[0].color_name)
-                commit("setNameSize", '')
-                commit("setDataPrice", '')
-
+                commit("setNameTable", "color");
+                commit("setIdSort", id);
+                commit("setDataColor", res.data.color[0]);
+                commit("setNameColor", res.data.color[0].color_name);
+                commit("setNameSize", "");
+                commit("setDataPrice", "");
             })
             .catch((error) => {
-                console.log("ERROR:", error.response.data.errors);
+                console.log("ERROR: ", error.data.response.errors);
             });
     },
     SORT_SIZE({ commit, state }, id) {
@@ -307,32 +299,35 @@ const actions = {
             .then((res) => {
                 commit("getListProductApi", res.data.products.product);
                 commit("getPaginate", res.data.paginate);
-                commit("setDataSize", res.data.size[0])
-                commit("setNameSize", res.data.size[0].size_name)
-                commit("setNameColor", '')
-                commit("setDataPrice", '')
+                commit("setNameTable", "size");
+                commit("setIdSort", id);
+                commit("setDataSize", res.data.size[0]);
+                commit("setNameSize", res.data.size[0].size_name);
+                commit("setNameColor", "");
+                commit("setDataPrice", "");
             })
             .catch((error) => {
-                console.log("ERROR:", error.response.data.errors);
+                console.log("ERROR: ", error.data.response.errors);
             });
     },
     SORT_PRICE({ commit, state }, param) {
-        if(param == 'ascending') {
-            commit("setDataPrice", 'ascending')
-        }else {
-            commit("setDataPrice", 'descending')
+        if (param == "ascending") {
+            commit("setDataPrice", "ascending");
+        } else {
+            commit("setDataPrice", "descending");
         }
         axios
             .get(`/api/admin/category/product/price/${param}`)
             .then((res) => {
                 commit("getListProductApi", res.data.products.product);
                 commit("getPaginate", res.data.paginate);
-                commit("setNameSize", '')
-                commit("setNameColor", '')
-
+                commit("setNameTable", "price");
+                commit("setIdSort", param);
+                commit("setNameSize", "");
+                commit("setNameColor", "");
             })
             .catch((error) => {
-                console.log("ERROR:", error.response.data.errors);
+                console.log("ERROR: ", error.data.response.errors);
             });
     },
 };

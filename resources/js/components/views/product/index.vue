@@ -54,7 +54,7 @@
       </div>
       <div v-if="getDataPrice != ''">
         <div class="alert alert-danger" role="alert">
-          Sort Size: {{capitalizeText(getDataPrice)}}
+          Sort Price: {{capitalizeText(getDataPrice)}}
         </div>
       </div>
       <table class="table text-center">
@@ -102,10 +102,7 @@
               </a>
             </li>
             <li class="page-item" :class="[{active: getActive(page)}]" v-for="(page, index) in getPaginateGetter.last_page" :key="index">
-
-                <a v-if="getDataColor.id != ''" class="page-link" href="#" @click="FETCH_NUMBER_PAGE_COLOR({id: getDataColor.id, number: page})" >{{page}}</a>
-                <a v-else-if="getDataSize.id != ''" class="page-link" href="#" @click="FETCH_NUMBER_PAGE_SIZE({id: getDataSize.id, number: page})" >{{page}}</a>
-                <a v-else-if="getDataPrice != ''" class="page-link" href="#" @click="FETCH_NUMBER_PAGE_PRICE({param: getDataPrice, number: page})" >{{page}}</a>
+                <a v-if="getNameTable != ''" class="page-link" href="#" @click="FETCH_NUMBER_PAGE_ALL({table: getNameTable, id: getIdSort, page: page})" >{{page}}</a>
                 <a v-else class="page-link" href="#" @click="FETCH_NUMBER_PAGE(page)" >{{page}}</a>
             </li>
             <li class="page-item" :class="[{ disabled: !getPaginateGetter.next_page }]">
@@ -157,11 +154,11 @@ export default {
     this.GET_LIST_PRODUCTS_API()
   },
   computed: {
-    ...mapGetters(['getListProducts', 'getPaginateGetter', 'getSearch', 'getTotalSearch', 'getListColor','getListSize', 'getDataColor', 'getDataSize', 'getNameColor', 'getNameSize', 'getDataPrice']),
+    ...mapGetters(['getListProducts', 'getPaginateGetter', 'getSearch', 'getTotalSearch', 'getListColor','getListSize', 'getDataColor', 'getDataSize', 'getNameColor', 'getNameSize', 'getDataPrice', 'getNameTable', 'getIdSort']),
   },
   methods: {
     ...mapMutations(['editProduct', 'clickDeleteProduct', 'getListProductApi', 'getPaginate']),
-    ...mapActions(['GET_CART_API', 'GET_COLOR_API', 'GET_SIZE_API', 'GET_LIST_PRODUCTS_API', 'FETCH_CUSTOMER', 'FETCH_NUMBER_PAGE', 'searchNameProduct', 'SORT_COLOR', 'FETCH_NUMBER_PAGE_COLOR', 'FETCH_NUMBER_PAGE_SIZE', 'SORT_SIZE', 'SORT_PRICE', 'FETCH_NUMBER_PAGE_PRICE']),
+    ...mapActions(['GET_CART_API', 'GET_COLOR_API', 'GET_SIZE_API', 'GET_LIST_PRODUCTS_API', 'FETCH_CUSTOMER', 'FETCH_NUMBER_PAGE', 'searchNameProduct', 'SORT_COLOR', 'SORT_SIZE', 'SORT_PRICE', 'FETCH_NUMBER_PAGE_PRICE', 'FETCH_NUMBER_PAGE_ALL']),
 
     getActive(number) {
       if(number == this.getPaginateGetter.current_page) {
