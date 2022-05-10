@@ -3,6 +3,17 @@
       <div class="mb-4 d-flex justify-content-between align-items-center">
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Add Product</button>
         <nav class="navbar">
+          <!-- Find Max Min Price  -->
+          <div class="btn-group mr-4">
+            <button type="button" class="text-white btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Max - Min Price
+            </button>
+            <div class="dropdown-menu mr-4">
+              <a class="dropdown-item" data-toggle="modal" data-target="#maxMinModal" href="#" @click="FIND_MAX_MIN_PRICE(max_min_price.max)">Max</a>
+              <a class="dropdown-item" data-toggle="modal" data-target="#maxMinModal" href="#" @click="FIND_MAX_MIN_PRICE(max_min_price.min)">Min</a>
+            </div>
+          </div>
+
           <!-- SORT SIZE  -->
           <div class="btn-group mr-4">
             <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -118,7 +129,7 @@
       <Create></Create>
       <Edit></Edit>
       <Delete></Delete>
-
+      <Maxmin></Maxmin>
     </div>
 </template>
 
@@ -127,15 +138,17 @@ import { mapGetters, mapMutations, mapActions } from 'vuex'
 import Edit from '../../modals/product/Edit.vue'
 import Create from '../../modals/product/Create.vue'
 import Delete from '../../modals/product/Delete.vue'
+import Maxmin from '../../modals/product/Showmaxmin.vue'
 export default {
   data() {
     return {
-      searchName: '',
-      data_paginate: [],
-      active: false,
       sort_price: {
         desc: 'descending',
         asc: 'ascending'
+      },
+      max_min_price: {
+        max: 'max',
+        min: 'min'
       }
     }
   },
@@ -143,6 +156,7 @@ export default {
     Edit,
     Create,
     Delete,
+    Maxmin,
   },
   created() {
     this.GET_CART_API()
@@ -158,7 +172,7 @@ export default {
   },
   methods: {
     ...mapMutations(['editProduct', 'clickDeleteProduct', 'getListProductApi', 'getPaginate']),
-    ...mapActions(['GET_CART_API', 'GET_COLOR_API', 'GET_SIZE_API', 'GET_LIST_PRODUCTS_API', 'FETCH_CUSTOMER', 'FETCH_NUMBER_PAGE', 'searchNameProduct', 'SORT_COLOR', 'SORT_SIZE', 'SORT_PRICE', 'FETCH_NUMBER_PAGE_PRICE', 'FETCH_NUMBER_PAGE_ALL']),
+    ...mapActions(['GET_CART_API', 'GET_COLOR_API', 'GET_SIZE_API', 'GET_LIST_PRODUCTS_API', 'FETCH_CUSTOMER', 'FETCH_NUMBER_PAGE', 'searchNameProduct', 'SORT_COLOR', 'SORT_SIZE', 'SORT_PRICE', 'FETCH_NUMBER_PAGE_PRICE', 'FETCH_NUMBER_PAGE_ALL', 'FIND_MAX_MIN_PRICE']),
 
     getActive(number) {
       if(number == this.getPaginateGetter.current_page) {

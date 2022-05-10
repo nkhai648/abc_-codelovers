@@ -78,6 +78,31 @@ class ProductController extends Controller
         ],200);
     }
 
+    public function max_min_price(Request $request) {
+        if($request->value == 'min') {
+            $value = Products::orderBy('price', 'asc')->first();
+            $maxmin = "Min";
+        }else {
+            $value = Products::orderBy('price', 'desc')->first();
+            $maxmin = "Max";
+        }
+        $data = [];
+        $color = Colors::find($value->color_id);
+        $size = Sizes::find($value->color_id);
+        $category = Categories::find($value->category_id);
+        $data = [
+            'id' => $value->id,
+            'name' => $value->name,
+            'price' => $value->price,
+            'image' => $value->image,
+            'data' => $maxmin,
+            'color_name' => $color->color_name,
+            'size_name' => $size->size_name,
+            'category_name' => $category->name,
+        ];
+        return response()->json($data, 200);
+    }
+
     /**
      * Show the form for creating a new resource.
      *

@@ -51,6 +51,7 @@ Route::group(['middleware' => ['auth:sanctum'], "prefix" => 'admin'], function()
             Route::get('color/{id}', [ProductController::class, 'sort_color']);
             Route::get('size/{id}', [ProductController::class, 'sort_size']);
             Route::get('price/{param}', [ProductController::class, 'sort_price']);
+            Route::get('{value}/price', [ProductController::class, 'max_min_price']);
         });
 
     });

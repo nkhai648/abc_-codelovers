@@ -46,9 +46,10 @@ const state = {
     dataSearch: {
         search: "",
     },
-    totalSearch: "",
+    totalSearch: 0,
     nameTable: "",
     idSort: "",
+    dataMaxMin: [],
 };
 const getters = {
     getDataProduct: (state) => state.dataProducts,
@@ -70,6 +71,7 @@ const getters = {
     getDataPrice: (state) => state.dataPrice,
     getNameTable: (state) => state.nameTable,
     getIdSort: (state) => state.idSort,
+    getDataMaxMin: (state) => state.dataMaxMin
 };
 const mutations = {
     getCartApi(state, data) {
@@ -156,6 +158,9 @@ const mutations = {
     setIdSort(state, id) {
         state.idSort = id;
     },
+    setDataMaxMin(state, data) {
+        state.dataMaxMin = data
+    }
 };
 const actions = {
     GET_CART_API({ commit, state }) {
@@ -268,7 +273,7 @@ const actions = {
             .then((res) => {
                 commit("getListProductApi", res.data.dataSearch);
                 commit("setTotalSearchApi", res.data.total);
-                commit("setdataPrice", "")
+                commit("setDataPrice", "")
                 commit("setNameColor", "")
                 commit("setNameSize", "")
             })
@@ -288,6 +293,7 @@ const actions = {
                 commit("setNameColor", res.data.color[0].color_name);
                 commit("setNameSize", "");
                 commit("setDataPrice", "");
+                commit("setTotalSearchApi", '');
             })
             .catch((error) => {
                 console.log("ERROR: ", error.data.response.errors);
@@ -305,6 +311,8 @@ const actions = {
                 commit("setNameSize", res.data.size[0].size_name);
                 commit("setNameColor", "");
                 commit("setDataPrice", "");
+                commit("setTotalSearchApi", '');
+
             })
             .catch((error) => {
                 console.log("ERROR: ", error.data.response.errors);
@@ -325,11 +333,22 @@ const actions = {
                 commit("setIdSort", param);
                 commit("setNameSize", "");
                 commit("setNameColor", "");
+                commit("setTotalSearchApi", '');
+
             })
             .catch((error) => {
                 console.log("ERROR: ", error.data.response.errors);
             });
     },
+    FIND_MAX_MIN_PRICE({commit, state}, value) {
+        axios.get(`/api/admin/category/product/${value}/price`)
+            .then((res) => {
+                commit("setDataMaxMin", res.data)
+            })
+            .catch(error => {
+                console.log('ERROR: ', error.response.data.errors)
+            })
+    }
 };
 
 export default { state, getters, actions, mutations };
